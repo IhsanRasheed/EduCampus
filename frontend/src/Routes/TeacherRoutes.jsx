@@ -1,6 +1,6 @@
 import {Route, Routes} from 'react-router-dom'
 import Home from '../Pages/Teacher/Home'
-import TeacherVerification from '../Verification/TeacherVerifiction'
+import TeacherVerification from '../Verification/TeacherVerification'
 
 
 function TeacherRoutes() {
