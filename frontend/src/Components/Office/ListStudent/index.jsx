@@ -9,8 +9,13 @@ function ListStudent() {
     const [filterData, setFilterData] = useState([]);
 
 useEffect( () => {
+    const headers = {
+        headers: {
+          Authorization: localStorage.getItem('officeToken')
+        }
+      }
 
-    listStudentsAPI().then((resp) => {
+    listStudentsAPI(headers).then((resp) => {
         if(resp.data.students){
             setData(resp.data.students)
             setFilterData(resp.data.students)

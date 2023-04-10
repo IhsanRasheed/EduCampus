@@ -51,7 +51,6 @@ const getHome = async (req, res, next) => {
     try{
         const teacherData = await teacher.find({registerId: id})
         res.json({ teacherData })
-
     }catch(err) {
       next(err)
     }

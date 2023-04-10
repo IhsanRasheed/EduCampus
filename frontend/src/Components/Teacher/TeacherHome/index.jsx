@@ -22,11 +22,14 @@ function TeacherHome() {
   }, []);
 
   const details = useSelector((state) => state.teacherData);
-  console.log(details)
-  const date_of_birth = details?.teacherData[0]?.date_of_birth;
-  const birthDate = new Date(date_of_birth);
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const readableDate = birthDate.toLocaleDateString("en-US", options);
+
+
+  const dateOfBirth = details?.teacherData[0]?.date_of_birth;
+  const date = new Date(dateOfBirth);
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear().toString();
+  const formattedDate = `${day}/${month}/${year}`;
 
   return (
     <div
@@ -83,7 +86,7 @@ function TeacherHome() {
                 <span className="font-bold text-base mb-0">Date of Birth</span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {readableDate}
+                  {formattedDate}
                 </span>
                 <br />
               </div>
@@ -131,7 +134,7 @@ function TeacherHome() {
                   {details?.teacherData[0]?.address?.pin},
                   <br />
                   {details?.teacherData[0]?.address?.district},
-                  {details?.teacherData[0]?.address?.kerala},
+                  {details?.teacherData[0]?.address?.state},
 
                   <br />
                 </span>

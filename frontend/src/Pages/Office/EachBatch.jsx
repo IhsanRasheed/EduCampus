@@ -4,7 +4,7 @@ import Batch from '../../Components/Office/EachBatch'
 
 function EachBatch() {
   return (
-    <div className='flex'>
+    <div className='flex '>
          <Sidebar/>
          <Batch/>
     </div>

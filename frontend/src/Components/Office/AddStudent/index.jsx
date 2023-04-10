@@ -14,7 +14,7 @@ function AddStudents() {
     name: "",
     phone: "",
     email: "",
-    dateOfBirth: "",
+    date_of_birth: "",
     gender: "",
     parentName: "",
     parentPhone: "",
@@ -36,7 +36,6 @@ function AddStudents() {
   const [imageURL, setImageURL] = useState(null);
   const [value] = useState(null);
   const navigate = useNavigate();
-  console.log(formValues);
 
   //API call for dropdown state & district(select-material)
   const [states, setStates] = useState([]);
@@ -98,7 +97,12 @@ function AddStudents() {
   };
 
   useEffect(() => {
-    availableBatchesAPI().then((response) => {
+    const headers = {
+      headers : {
+        Authorization: localStorage.getItem('officeToken')
+      }
+    }
+    availableBatchesAPI(headers).then((response) => {
       if (response.data.status) {
         setBatches(response.data.availableBatches);
       } else {
@@ -115,7 +119,7 @@ function AddStudents() {
     data.append("name", formValues.name);
     data.append("phone", formValues.phone);
     data.append("email", formValues.email);
-    data.append("dateOfBirth", formValues.dateOfBirth);
+    data.append("date_of_birth", formValues.date_of_birth);
     data.append("gender", formValues.gender);
     data.append("parentName", formValues.parentName);
     data.append("parentPhone", formValues.parentPhone);
@@ -123,12 +127,12 @@ function AddStudents() {
     data.append("institute", formValues.institute);
     data.append("university", formValues.university);
     data.append("batch", formValues.batch);
-    data.append("house_name", formValues.houseName);
+    data.append("house_name", formValues.house_name);
     data.append("place", formValues.place);
     data.append("post", formValues.post);
     data.append("pin", formValues.pin);
-    data.append("district", formValues.district);
     data.append("state", formValues.state);
+    data.append("district", formValues.district);
     data.append("file", formValues.file);
 
     const errors = validate(formValues);
@@ -139,6 +143,7 @@ function AddStudents() {
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem('officeToken')
         },
       };
 
@@ -224,9 +229,9 @@ function AddStudents() {
                       <Input
                         type="date"
                         label="Date of Birth"
-                        value={formValues.dateOfBirth}
+                        value={formValues.date_of_birth}
                         onChange={onChangeHandle}
-                        name="dateOfBirth"
+                        name="date_of_birth"
                       />
                     </div>
                   </div>
@@ -383,7 +388,7 @@ function AddStudents() {
                         label="House Name"
                         value={formValues.house_name}
                         onChange={onChangeHandle}
-                        name="houseName"
+                        name="house_name"
                       />
                     </div>
                   </div>

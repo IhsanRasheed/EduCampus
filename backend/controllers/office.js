@@ -2,16 +2,14 @@ const bcrypt = require("bcrypt");
 const mailer = require("../config/nodeMailer");
 const student = require("../models/student");
 const batch = require("../models/batch");
+const subject = require('../models/subject')
 const teacher = require("../models/teacher");
 const helpers = require("../helpers/helpers");
 const jwt = require("jsonwebtoken");
-
+const mongoose = require('mongoose')
 require("dotenv").config();
 
 const login = async (req, res, next) => {
-  const createToken = (data) => {
-    return jwt.sign({ data }, process.env.JWT_SECRET, { expiresIn: "1d" });
-  };
   const email = req.body.email;
   const password = req.body.password;
 
@@ -19,12 +17,24 @@ const login = async (req, res, next) => {
     process.env.officeEmail === email &&
     process.env.officePassword === password
   ) {
-    const token = createToken(email);
-    res
-      .status(200)
-      .json({ message: "Admin login successful", token, status: true });
-
-    // res.json({ status: true, email });
+    const payload = {
+      email: email,
+    };
+    jwt.sign(
+      payload,
+      process.env.OFFICE_SECRET,
+      { expiresIn: 3600 },
+      (err, token) => {
+        if (err) console.error("There is something in token", err);
+        else {
+          res.json({
+            status: true,
+            email,
+            token: `Bearer ${token}`,
+          });
+        }
+      }
+    );
   } else {
     errors = "Incorrect email or Password";
     res.json({ errors });
@@ -61,12 +71,13 @@ const addStudent = async (req, res, next) => {
       name: data.name,
       phone: data.phone,
       email: data.email,
-      dateOfBirth: data.dateOfBirth,
+      date_of_birth: data.date_of_birth,
       gender: data.gender,
       parentName: data.parentName,
       parentPhone: data.parentPhone,
       education: data.education,
       institute: data.institute,
+      university: data.university,
       batch: data.batch,
       password: hashedPassword,
       image: image,
@@ -79,6 +90,14 @@ const addStudent = async (req, res, next) => {
         state: data.state,
       },
     });
+    await batch.updateOne(
+      {
+          registerId: data.batch
+      },
+      {
+          $inc: { batchFill: 1 }
+      }
+  )
 
     let mailDetails = {
       from: process.env.nodemailerEmail,
@@ -158,6 +177,7 @@ const addTeacher = async (req, res, next) => {
 
   const password = generatePassword(8);
   const hashedPassword = await bcrypt.hash(password, 10);
+  console.log(data)
 
   try {
     await teacher.create({
@@ -280,16 +300,15 @@ const getBatch = async (req, res, next) => {
         },
       },
     ]);
-    const numberOfSeat = batchData[0].numberOfSeat
-    const batchFill = batchData[0].batchFill  
-    const availableSeat = numberOfSeat - batchFill
+    const numberOfSeat = batchData[0].numberOfSeat;
+    const batchFill = batchData[0].batchFill;
+    const availableSeat = numberOfSeat - batchFill;
     res.json({
       status: true,
       batchStudent,
       batchData,
-      availableSeat
-    })
-
+      availableSeat,
+    });
   } catch (err) {
     next(err);
   }
@@ -311,6 +330,164 @@ const getAvailableBatches = async (req, res, next) => {
   }
 };
 
+const addSubject = async(req, res, next) => {
+  try{
+    const data = req.body
+    await subject.create({
+      subject: data.subject
+    })
+    res.json({
+      status: true
+    })
+  }catch(err) {
+    next(err)
+  }
+}
+
+const listSubjects = async(req, res, next) => {
+  try{
+    const subjects = await subject.find()
+    res.json({
+      status: true,
+      subjects
+    })
+    
+
+  }catch(err){
+    next(err)
+  }
+}
+
+const getAvailableSubjects = async(req, res, next) => {
+  try{
+    const subjects = await subject.find({isBlocked: false})
+    res.json({
+      status: true,
+      subjects
+    })
+
+  }catch(err){
+    next(err)
+  }
+}
+
+const getEditBatch = async(req, res, next) => {
+  const id  = req.params.id
+  const objectId = new mongoose.Types.ObjectId(id)
+
+  try{
+    const batchData = await batch.aggregate([
+      {
+        $match: {
+          _id: objectId
+        }
+      },
+      {
+        $lookup: {
+          from: 'teachers',
+          localField: 'headOfTheBatch',
+          foreignField: 'registerId',
+          as: 'teacher_data'
+        }
+      },
+      {
+        $project: {
+          numberOfSeat: 1,
+          remarks: 1,
+          subjects: 1,
+          batchHeadId: '$headOfTheBatch',
+          headOfTheBatch: { $arrayElemAt: ['$teacher_data.name',0]}
+        }
+      }
+    ])
+
+    const teachers = await teacher.aggregate([
+      {
+         $match: {}
+      },
+      {
+        $project: {
+          name: 1,
+          registerId: 1
+        }
+      }
+    ])
+
+    const availableTeachers = await teacher.aggregate([
+      {
+        $match: { myBatch: ''}
+      },
+      {
+        $project: {
+          name: 1,
+          registerId: 1
+        }
+      }
+    ])
+
+    res.json({
+      status: true,
+      batchData,
+      teachers,
+      availableTeachers
+    })
+
+
+  }catch(err){
+    next(err)
+  }
+}
+
+const patchEditBatch = async (req, res, next) => {
+
+  const id = req.params.id
+  const data = req.body
+  const batchData = await batch.findOne({ _id: id })
+
+  if (batchData.headOfTheBatch !== data.batchHeadId) {
+      try {
+          await teacher.updateOne(
+              {
+                  myBatch: batchData.registerId
+              },
+              {
+                  $set: {
+                      myBatch: ""
+                  }
+              }
+
+          )
+      } catch (err) {
+          next(err)
+      }
+  }
+  await teacher.updateOne(
+
+      { registerId: data.batchHeadId },
+      {
+          $set: {
+              myBatch: batchData.registerId,
+          }
+      }
+  )
+  try {
+      await batch.updateOne(
+          { _id: id },
+          {
+              $set: {
+                  numberOfSeat: data.numberOfSeat,
+                  remarks: data.remarks,
+                  headOfTheBatch: data.batchHeadId,
+                  subjects: data.subjectValues
+              }
+          }
+      )
+      res.json({ status: true })
+  } catch (err) {
+      next(err)
+  }
+}
+
 module.exports = {
   addStudent,
   login,
@@ -322,4 +499,9 @@ module.exports = {
   listStudents,
   getBatch,
   getAvailableBatches,
+  addSubject,
+  listSubjects,
+  getAvailableSubjects,
+  getEditBatch,
+  patchEditBatch
 };

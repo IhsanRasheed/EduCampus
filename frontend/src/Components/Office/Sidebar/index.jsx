@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 const AdminNavbar = () => {
   const menus = [
     { name: "Dashboard", link: "/office/home", icon: MdOutlineDashboard },
+    { name: "Subjects", link: "/office/subjects", icon: AiOutlineUsergroupAdd },
     { name: "Batches", link: "/office/batches", icon: AiOutlineUsergroupAdd },
     { name: "Teachers", link: "/office/teachers", icon: GiTeacher },
     { name: "Students", link: "/office/students", icon: MdPeople},

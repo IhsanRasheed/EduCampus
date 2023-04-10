@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { officeLoginAPI } from "../../../Services/OfficeService";
-import Cookies from "js-cookie";
 
 function Login() {
   // const token = localStorage.getItem('admin')
@@ -20,24 +19,15 @@ function Login() {
     event.preventDefault();
 
 
-
-    // const headers = {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //     "Content-Type": "application/json",
-    //   },
-    // };
-
     officeLoginAPI(formValues).then((response) => {
       if(response.data.status) {
-        // localStorage.setItem('admin',response.data.token)
-        Cookies.set('Admin', response.data.token, { expires: 7000 });
+        const jwtToken = response.data.token
+        localStorage.setItem('officeToken',jwtToken)
        navigate('/office/home')
       }else{
+        console.log('error')
         setError(response.data.errors)
       }
-
-
     }).catch((error) => {
       console.log(error)
 

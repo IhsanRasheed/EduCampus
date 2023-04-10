@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const student = require("../models/student");
+const jwt = require("jsonwebtoken");
 
 const login = async (req, res, next) => {
   const data = req.body;
@@ -12,13 +13,26 @@ const login = async (req, res, next) => {
         studentData.password
       );
       if (passwordMatch) {
-        res.json({
-          success: true,
+        const payload = {
           registerId: data.registerId
-        });
+        }
+        jwt.sign(
+          payload,
+          process.env.STUDENT_SECRET,
+          { expiresIn: 3600 },
+          (err, token) => {
+            if (err) console.log('There is something error in token', err)
+            else {
+              res.json({
+                success: true,
+                token: `Bearer ${token}`
+              })
+            }
+          }
+        )
       } else {
         res.json({
-          error: "invalid Password",
+          error: "Invalid Password",
         });
       }
     } else {
@@ -29,6 +43,17 @@ const login = async (req, res, next) => {
   }
 };
 
+const getHome = async (req, res, next) => {
+  const id = req.registerId
+  try{
+    const studentData = await student.find({registerId: id})
+    res.json({ studentData })
+  }catch(err){
+    next(err)
+  }
+}
+
 module.exports = {
   login,
+  getHome
 };

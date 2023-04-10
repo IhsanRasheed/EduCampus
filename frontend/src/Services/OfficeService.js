@@ -1,41 +1,65 @@
 import axios from '../axios'
 
-export const addStudentAPI = (data,headers) => {
-    return axios.post('/office/add-student', data ,headers)
-}
-
 export const officeLoginAPI = (data) => {
     return axios.post('/office/login', data)
 }
 
-export const addBatchAPI = (data) => {
-    return axios.post('/office/add-batch', data)
+export const addStudentAPI = (data, headers) => {
+    return axios.post('/office/add-student', data ,headers)
 }
 
-export const addTeacherAPI = (data,headers) => {
-    return axios.post('/office/add-teacher', data,headers)
+export const addBatchAPI = (data, headers) => {
+    return axios.post('/office/add-batch', data, headers)
 }
 
-export const availableTeachersAPI = () => {
-    return axios.get('/office/available-teachers')
+export const addTeacherAPI = (data, headers) => {
+    return axios.post('/office/add-teacher', data, headers)
 }
 
-export const listBatchesAPI = () => {
-    return axios.get('/office/batches')
+export const availableTeachersAPI = (headers) => {
+    return axios.get('/office/available-teachers',headers)
 }
 
-export const listTeachersAPI = () => {
-    return axios.get('/office/teachers')
+export const listBatchesAPI = (headers) => {
+    return axios.get('/office/batches', headers)
 }
 
-export const listStudentsAPI = () => {
-    return axios.get('/office/students')
+export const listTeachersAPI = (headers) => {
+    return axios.get('/office/teachers',headers)
 }
 
-export const getBatchAPI = (id) => {
-    return axios.get(`/office/get-batch/${id}`)
+export const listStudentsAPI = (headers) => {
+    return axios.get('/office/students', headers)
 }
 
-export const availableBatchesAPI = () => {
-    return axios.get('/office/available-batches')
+export const getBatchAPI = (id, headers) => {
+    return axios.get(`/office/get-batch/${id}`,headers)
+}
+
+export const availableBatchesAPI = (headers) => {
+    return axios.get('/office/available-batches', headers)
+}
+
+export const handleGetStudentAPI = (id, headers) => {
+    return axios.get(`/office/student/${id}`, headers)
+}
+
+export const addSubjectAPI = (data, headers) => {
+    return axios.post('/office/add-subject', data, headers)
+}
+
+export const listSubjectsAPI = (headers) => {
+    return axios.get('/office/subjects', headers)
+}
+
+export const availableSubjectsAPI = (headers) => {
+    return axios.get('/office/available-subjects', headers)
+}
+
+export const getEditBatchAPI = (id,headers) => {
+    return axios.get(`/office/get-edit-batch/${id}`, headers)
+}
+
+export const editBatchAPI = (id,data,headers) => {
+    return axios.patch(`/office/edit-batch/${id}`,data, headers)
 }

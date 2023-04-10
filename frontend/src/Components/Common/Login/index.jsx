@@ -3,7 +3,6 @@ import Logo from "../Logo";
 import { useNavigate } from "react-router-dom";
 import { studentLoginAPI } from "../../../Services/StudentService";
 import { teacherLoginAPI } from "../../../Services/TeacherService";
-import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 
 function Login() {
@@ -29,17 +28,9 @@ function Login() {
           if (response.data.error) {
             setError(response.data.error);
           } else {
+            const jwtToken = response.data.token;
+            Cookies.set("studentToken", jwtToken, { expires: 7000 });
             navigate("/student/home");
-            toast.success("Student login successfully", {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
           }
         })
         .catch((error) => {

@@ -7,6 +7,7 @@ import subjectValidate from "./SubjectValidate";
 import {
   addBatchAPI,
   availableTeachersAPI,
+  availableSubjectsAPI
 } from "../../../Services/OfficeService";
 
 function AddBatches() {
@@ -19,34 +20,55 @@ function AddBatches() {
     remarks: "",
   };
 
-  const subjectInitiaValues = { subject: "", teacher: "" };
+  const subjectInitiaValues = { subject: "",teacher: ""};
 
   const [formValues, setFormvalues] = useState(initialVlaues);
-  // const [error, setErrors] = useState({})
-  // const [subErrors,setSubErrors] = useState({})
   const [subjectValue, setSubjectValue] = useState(subjectInitiaValues);
   const [subjectValues, setSubjectValues] = useState([]);
+  const [subjects,setSubjects] = useState([])
   const [teachers, setTeachers] = useState([]);
   const [allTeachers, setAllTeachers] = useState([]);
-  const [value] = useState(null);
+  const [value,setValue] = useState(null);
   const navigate = useNavigate();
 
-  console.log(formValues);
-  console.log(subjectValue);
-  console.log(subjectValues);
-  console.log(teachers);
+
 
   useEffect(() => {
-    availableTeachersAPI().then((response) => {
-      if (response.data.status) {
-        console.log("hi");
-        setTeachers(response.data.teachers);
-        setAllTeachers(response.data.allTeachers);
-      }else{
-        console.log(response)
+    const headers = {
+      headers: {
+        Authorization: localStorage.getItem('officeToken')
       }
-    });
+    }
+  
+    async function fetchData() {
+      try {
+        const teachersResponse = await availableTeachersAPI(headers);
+        if (teachersResponse.data.status) {
+          setTeachers(teachersResponse.data.teachers);
+          setAllTeachers(teachersResponse.data.allTeachers);
+        } else {
+          console.log(teachersResponse);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+  
+      try {
+        const subjectsResponse = await availableSubjectsAPI(headers);
+        if (subjectsResponse.data.status) {
+          setSubjects(subjectsResponse.data.subjects);
+        } else {
+          console.log(subjectsResponse);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  
+    fetchData();
   }, []);
+  
+
 
   const onChangeHandle = (e) => {
     if (e.target) {
@@ -57,21 +79,19 @@ function AddBatches() {
       const name = "headOfTheBatch";
       setFormvalues({ ...formValues, [name]: value });
     }
-    // setErrors({...error, [name] : ""})
   };
 
+  const onSubjectHandle = (e) => {
+    const [value] = [e]
+    const name = 'subject'
+    setSubjectValue({...subjectValue,[name]: value})
+  }
+
   const handleChange = (e) => {
-    // const { name, value } = e.target;
-    // setSubjectValue({ ...subjectValue, [name]: value });
-    // setSubErrors({...subErrors, [name] : ""})
-    if (e.target) {
-      const { name, value } = e.target;
-      setSubjectValue({ ...subjectValue, [name]: value });
-    } else {
       const [value] = [e];
       const name = "teacher";
       setSubjectValue({ ...subjectValue, [name]: value });
-    }
+
   };
 
   const addSubHandle = (e) => {
@@ -79,19 +99,20 @@ function AddBatches() {
     const subErrors = subjectValidate(subjectValue);
 
     if (Object.keys(subErrors).length !== 0) {
-      // setSubErrors(subErrors);
       toast(subErrors.message);
     } else {
-      setSubjectValues([...subjectValues, subjectValue]);
-      setSubjectValue(subjectInitiaValues);
+
+      setSubjectValues([...subjectValues, subjectValue])
+      setValue(subjectInitiaValues)
+     
+
     }
-  };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validate(formValues);
     if (Object.keys(errors).length !== 0) {
-      // setErrors(errors);
       toast(errors.message);
     } else {
       const data = {
@@ -99,7 +120,13 @@ function AddBatches() {
         subjectValues,
       };
 
-      addBatchAPI(data).then((response) => {
+      const headers = {
+        headers: {
+          Authorization: localStorage.getItem('officeToken')
+        }
+      }
+
+      addBatchAPI(data, headers).then((response) => {
         
         if(response.data.status) {
           navigate('/office/batches')
@@ -186,12 +213,12 @@ function AddBatches() {
                       value={value}
                       onChange={onChangeHandle}
                     >
-                      {/* <Option value="Male">Male</Option>
-                      <Option value="Female">Female</Option>
-                      <Option value="Other">Other</Option> */}
-                      {teachers.map((obj) => {
+
+                      {teachers.map((obj,i) => {
                         return (
-                          <Option value={obj.registerId}>
+                          <Option 
+                          key={i}
+                          value={obj.registerId}>
                             {obj.name} ({obj.registerId})
                           </Option>
                         );
@@ -224,12 +251,29 @@ function AddBatches() {
 
                 <div className="w-full lg:w-6/12 px-4">
                   <div className="relative w-full mb-3">
-                    <Input
+                    {/* <Input
                       label="Subject"
                       name="subject"
-                      value={formValues.subject}
+                      value={subjectValue.subject}
                       onChange={handleChange}
-                    />
+                    /> */}
+                     <Select
+                      label="Subject"
+                      name="subject"
+                      value={value}
+                      onChange={onSubjectHandle}
+                    >
+
+                      {subjects.map((obj,i) => {
+                        return (
+                          <Option 
+                          key={i++}
+                          value={obj.subject}>
+                            {obj.subject} 
+                          </Option>
+                        );
+                      })}
+                    </Select>
                   </div>
                 </div>
 
@@ -241,9 +285,9 @@ function AddBatches() {
                       value={value}
                       onChange={handleChange}
                     >
-                      {allTeachers.map((obj) => {
+                      {allTeachers.map((obj,i) => {
                         return (
-                          <Option value={obj.name}>
+                          <Option key={i} value={obj.name}>
                             {obj.name} ({obj.registerId})
                           </Option>
                         );
@@ -255,9 +299,9 @@ function AddBatches() {
 
 
               <div className="flex">
-                {subjectValues.map((obj) => {
+                {subjectValues.map((obj,i) => {
                   return (
-                    <div className="flex justify-center px-2" key={obj.subject}>
+                    <div className="flex justify-center px-2" key={i}>
                       <div className="subjectAndTeacher container">
                         <span className="mt-2">
                           {obj.subject} : ({obj.teacher})

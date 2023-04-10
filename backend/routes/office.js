@@ -3,26 +3,39 @@ const officeRouter = express()
 
 const officeController = require('../controllers/office.js')
 const uploadImage = require('../config/cloudinary')
-const auth = require('../middleware/adminAuth')
+const verify = require('../middleware/Authorization.js')
 
-officeRouter.post('/add-student',uploadImage,officeController.addStudent)
 
 officeRouter.post('/login',officeController.login)
 
-officeRouter.post('/add-batch', officeController.addBatch )
+officeRouter.post('/add-student', verify.tokenOffice, uploadImage,officeController.addStudent)
 
-officeRouter.post('/add-teacher',uploadImage, officeController.addTeacher)
+officeRouter.post('/add-batch', verify.tokenOffice, officeController.addBatch )
 
-officeRouter.get('/available-teachers', officeController.getAvailableTeachers)
+officeRouter.post('/add-teacher', verify.tokenOffice,uploadImage, officeController.addTeacher)
 
-officeRouter.get('/batches', officeController.listBatches)
+officeRouter.get('/available-teachers', verify.tokenOffice, officeController.getAvailableTeachers)
 
-officeRouter.get('/teachers', officeController.listTeachers)
+officeRouter.get('/batches', verify.tokenOffice, officeController.listBatches)
 
-officeRouter.get('/students', officeController.listStudents)
+officeRouter.get('/teachers', verify.tokenOffice, officeController.listTeachers)
 
-officeRouter.get('/get-batch/:id', officeController.getBatch)
+officeRouter.get('/students', verify.tokenOffice, officeController.listStudents)
 
-officeRouter.get('/available-batches', officeController.getAvailableBatches)
+officeRouter.get('/get-batch/:id', verify.tokenOffice, officeController.getBatch)
+
+officeRouter.get('/available-batches', verify.tokenOffice, officeController.getAvailableBatches)
+
+officeRouter.post('/add-subject', verify.tokenOffice, officeController.addSubject)
+
+officeRouter.get('/subjects', verify.tokenOffice, officeController.listSubjects)
+
+officeRouter.get('/available-subjects', verify.tokenOffice, officeController.getAvailableSubjects)
+
+officeRouter.get('/get-edit-batch/:id', verify.tokenOffice, officeController.getEditBatch)
+
+officeRouter.patch('/edit-batch/:id', verify.tokenOffice, officeController.patchEditBatch)
+
+
 
 module.exports = officeRouter

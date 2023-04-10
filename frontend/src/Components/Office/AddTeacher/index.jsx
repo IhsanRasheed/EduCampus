@@ -30,6 +30,7 @@ function AddTeacher() {
   const [imageURL, setImageURL] = useState(null);
   const [value] = useState(null);
   const navigate = useNavigate();
+  console.log(formValues)
 
 
   //API call for dropdown state & district(select-material)
@@ -107,8 +108,8 @@ function AddTeacher() {
     data.append("place", formValues.place);
     data.append("post", formValues.post);
     data.append("pin", formValues.pin);
+    data.append("state", formValues.state);
     data.append("district", formValues.district);
-    data.append("state", formValues.district);
     data.append("file", formValues.file);
 
     const errors = validate(formValues);
@@ -118,6 +119,7 @@ function AddTeacher() {
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem('officeToken')
         },
       };
       addTeacherAPI(data, headers).then((resp) => {

@@ -7,7 +7,10 @@ import AddTeacher from '../Pages/Office/AddTeacher'
 import ListBatch from '../Pages/Office/ListBatch'
 import ListTeacher from '../Pages/Office/ListTeacher'
 import ListStudent from '../Pages/Office/ListSudent'
+import ListSubject from '../Pages/Office/ListSubject'
 import EachBatch from '../Pages/Office/EachBatch'
+import OfficeVerification from '../Verification/OfficeVerification'
+import EditBatch from '../Pages/Office/EditBatch'
 
 
 function OfficeRoutes() {
@@ -19,19 +22,23 @@ function OfficeRoutes() {
 
         <Route path='/home' element={<OfficeHome />}></Route>
 
-        <Route path='/add-student' element={<AddStudent />} ></Route>
+        <Route path='/add-student' element={<OfficeVerification><AddStudent /></OfficeVerification>} ></Route>
 
-        <Route path='/add-batch' element={<AddBatch />} ></Route>
+        <Route path='/add-batch' element={<OfficeVerification><AddBatch /></OfficeVerification>} ></Route>
 
-        <Route path='/add-teacher' element={<AddTeacher />} ></Route>
+        <Route path='/add-teacher' element={<OfficeVerification><AddTeacher /></OfficeVerification>} ></Route>
 
-        <Route path='/batches' element={<ListBatch />}></Route>
+        <Route path='/batches' element={<OfficeVerification><ListBatch /></OfficeVerification>}></Route>
 
-        <Route path='/teachers' element={<ListTeacher />}></Route>
+        <Route path='/teachers' element={<OfficeVerification><ListTeacher /></OfficeVerification>}></Route>
 
-        <Route path='/students' element={ <ListStudent /> }></Route>
+        <Route path='/students' element={ <OfficeVerification><ListStudent /> </OfficeVerification>}></Route>
 
-        <Route path='/each-batch' element={ <EachBatch />}></Route>
+        <Route path='/each-batch' element={ <OfficeVerification><EachBatch /></OfficeVerification>}></Route>
+
+        <Route path='/subjects' element={<OfficeVerification><ListSubject /></OfficeVerification>}></Route>
+
+        <Route path='/edit-batch' element={<OfficeVerification><EditBatch /></OfficeVerification>}></Route>
 
 
     </Routes>

@@ -10,7 +10,12 @@ function ListBatch() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    listBatchesAPI().then((response) => {
+    const headers = {
+      headers: {
+        Authorization: localStorage.getItem('officeToken')
+      }
+    }
+    listBatchesAPI(headers).then((response) => {
       if (response.data.status) {
         setData(response.data.batches);
         setFilterData(response.data.batches);
@@ -21,7 +26,13 @@ function ListBatch() {
   }, []);
 
   const handleClick = async (id) => {
-    getBatchAPI(id).then((response) => {
+    const headers = {
+      headers: {
+        Authorization: localStorage.getItem('officeToken')
+      }
+    }
+
+    getBatchAPI(id,headers).then((response) => {
       if (response.data.status) {
         navigate("/office/each-batch", {
           state: {
@@ -68,6 +79,7 @@ function ListBatch() {
       name: "View",
       cell: (row) => (
         <img
+        className="hover:cursor-pointer"
           src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg"
           alt="Manage"
           width="24"

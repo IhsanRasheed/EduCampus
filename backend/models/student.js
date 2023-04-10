@@ -24,7 +24,7 @@ const studentSchema = mongoose.Schema({
     trim: true,
     unique: true,
   },
-  dateOfBirth: {
+  date_of_birth: {
     type: Date,
     required: true,
   },
@@ -47,6 +47,11 @@ const studentSchema = mongoose.Schema({
     trim: true,
   },
   institute: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  university: {
     type: String,
     required: true,
     trim: true,
