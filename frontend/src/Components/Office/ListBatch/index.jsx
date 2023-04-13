@@ -57,7 +57,7 @@ function ListBatch() {
     },
     {
       name: "Batch Head",
-      selector: (row) => row.teacher_data[0].name,
+      selector: (row) => row.teacher_data[0]?.name,
     },
     {
       name: "Start Date",

@@ -36,6 +36,9 @@ officeRouter.get('/get-edit-batch/:id', verify.tokenOffice, officeController.get
 
 officeRouter.patch('/edit-batch/:id', verify.tokenOffice, officeController.patchEditBatch)
 
+officeRouter.patch('/block-subject/:id',  officeController.blockSubject)
+
+officeRouter.patch('/unblock-subject/:id',  officeController.unblocksubject)
 
 
 module.exports = officeRouter

@@ -401,6 +401,7 @@ const getEditBatch = async(req, res, next) => {
       }
     ])
 
+
     const teachers = await teacher.aggregate([
       {
          $match: {}
@@ -432,7 +433,6 @@ const getEditBatch = async(req, res, next) => {
       availableTeachers
     })
 
-
   }catch(err){
     next(err)
   }
@@ -442,6 +442,7 @@ const patchEditBatch = async (req, res, next) => {
 
   const id = req.params.id
   const data = req.body
+
   const batchData = await batch.findOne({ _id: id })
 
   if (batchData.headOfTheBatch !== data.batchHeadId) {
@@ -488,6 +489,41 @@ const patchEditBatch = async (req, res, next) => {
   }
 }
 
+const blockSubject = async(req, res, next) => {
+  const id   = req.params.id
+  subject.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: true},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((subject)=> {
+    res.json({
+      status: true,
+      subject
+    })
+  })
+}
+
+const unblocksubject = async(req, res, next) => {
+  const id = req.params.id
+  subject.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: false},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((subject)=> {
+    res.json({
+      status: true,
+      subject
+    })
+  })
+  
+}
+
 module.exports = {
   addStudent,
   login,
@@ -503,5 +539,7 @@ module.exports = {
   listSubjects,
   getAvailableSubjects,
   getEditBatch,
-  patchEditBatch
+  patchEditBatch,
+  blockSubject,
+  unblocksubject
 };

@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getEditBatchAPI, editBatchAPI } from "../../../Services/OfficeService";
+import { toast } from "react-toastify";
 
 function EditBatch() {
   const navigate = useNavigate();
   const location = useLocation();
   const batchId = location.state.id;
   const [teachers, setTeachers] = useState([{ name: "", registerId: "" }]);
-  const [availableTeachers, setAvailableTeachers] = useState([
-    { name: "", registerId: "" },
-  ]);
+  const [availableTeachers, setAvailableTeachers] = useState([ { name: "", registerId: "" },]);
   const [batchData, setBatchData] = useState({
     numberOfSeat: "",
     remarks: "",
     headOfTheBatch: "",
     batchHeadId: "",
   });
-  console.log(batchData);
 
   const [subjectValues, setSubjectValues] = useState([
     { subject: "", teacher: "" },
@@ -31,6 +29,7 @@ function EditBatch() {
     };
 
     getEditBatchAPI(id, headers).then((response) => {
+      console.log(response)
       setTeachers(response.data.teachers);
       setAvailableTeachers(response.data.availableTeachers);
       const batchData = { ...response.data.batchData[0] };
@@ -72,6 +71,16 @@ function EditBatch() {
     editBatchAPI(batchId, data, headers).then((response) => {
       if (response.data.status) {
         navigate("/office/batches");
+        toast.success("Batch Edited successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     });
   };

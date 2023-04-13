@@ -7,7 +7,7 @@ function SubjectAdd({ visible, onClose, reload }) {
     subject: "",
   });
 
-  const handleClick = async (e) => {
+  const handleClick = async (e, action) => {
     const regex = /\d/; // regular expression to check if there are any digits
     if (regex.test(data.subject)) {
       toast("Subject cannot contain numbers");
@@ -27,7 +27,6 @@ function SubjectAdd({ visible, onClose, reload }) {
           console.log(err);
         });
     }
-
   };
 
   if (!visible) return null;

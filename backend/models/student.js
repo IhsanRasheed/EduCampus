@@ -104,7 +104,58 @@ const studentSchema = mongoose.Schema({
     filename: {
       type: String
     }
-  }]
+  }],
+  avgAttendance:{
+    type:Number,
+   default:0
+  },
+  attendance: {
+    type: [
+      {
+        month: {
+          type: Date
+        },
+        workingDays: {
+          type: Number
+        },
+        noOfDaysPresent: {
+          type: Number
+        },
+        percent: {
+          type: Number
+        }
+      }
+    ],
+    default: [],
+
+  },
+  markDetails: {
+    type: [
+      {
+        month: {
+          type: Date
+        },
+        percentage: {
+          type: Number
+        },
+        subjectMarks: {
+          type: [
+            {
+              subject: {
+                type: String
+              },
+              mark: {
+                type: Number
+              },
+            }
+          ]
+        },
+
+
+      }
+    ],
+    default: []
+  },
   
 });
 

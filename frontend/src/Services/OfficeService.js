@@ -63,3 +63,11 @@ export const getEditBatchAPI = (id,headers) => {
 export const editBatchAPI = (id,data,headers) => {
     return axios.patch(`/office/edit-batch/${id}`,data, headers)
 }
+
+export const blockSubjectAPI = (id, headers) => {
+    return axios.patch(`/office/block-subject/${id}`, headers)
+}
+
+export const unBlockSubjectAPI = (id, headers) => {
+    return axios.patch(`/office/unblock-subject/${id}`, headers)
+}

@@ -41,6 +41,19 @@ const batchSchema = mongoose.Schema({
   remarks: {
     type: String,
   },
+  workingDays: {
+    type: [
+      {
+        month: {
+          type: Date,
+        },
+        numberOfWorkingDays: {
+          type: Number,
+        },
+      },
+    ],
+    default: [],
+  },
   subjects: [
     {
       subject: {

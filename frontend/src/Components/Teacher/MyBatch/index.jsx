@@ -1,126 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import BaseTable from "../../Common/BaseTable";
-import { handleGetStudentAPI } from "../../../Services/OfficeService";
+import React, { useEffect } from 'react'
+import { useState } from 'react'
+import { getBatchAPI, getBatchPerformanceAPI } from '../../../Services/TeacherService';
+import Cookies from "js-cookie";
 
-function EachBatch() {
-  const [students, setStudents] = useState([]);
-  const [search, setsearch] = useState("");
-  const [filterData, setFilterData] = useState([]);
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  const batch = location.state.batch;
-  const startDate = location.state.batch[0].startDate;
+
+function MyBatch() {
+
+  const [performance,setPerormance]=useState({feeCompletionRate: "", avgPerformance: "", avgattendance: ""})
+  const [batch, setBatch] = useState([])
+  console.log(batch)
+  const [availableSeat, setAvailableSeat] = useState('')
+  const [showPage, setShowPage] = useState(true)
+  const startDate = batch[0]?.startDate
   const DateStart = new Date(startDate);
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const readableStartDate = DateStart.toLocaleDateString("en-US", options);
-  const batchId = location.state.batch[0]._id;
-
-  const handleClick = () => {
-    navigate('/office/edit-batch',{
-      state: {
-        id: batchId
-      }
-    })
-  };
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const readableStartDate = DateStart.toLocaleDateString('en-US', options);
 
   useEffect(() => {
-    setStudents(location.state.students);
-  }, []);
-
-
-  // const handleGetStudent = async (id) => {
-  //   const headers = {
-  //     headers: {
-  //       Authorization: localStorage.getItem("officeToken"),
-  //     },
-  //   };
-  //   handleGetStudentAPI(id, headers).then((response) => {
-  //     console.log("ethi");
-  //     if (response.data.status) {
-  //     }
-  //   });
-  // };
-
-
-
-  const columns = [
- 
-    {
-        name: "Id",
-        selector: (row) => row.registerId,
-        sortable:true
-    },
-    {
-        name: "Name",
-        cell: (row) => (
-          <div className="flex items-center">
-            <img src={row.image[0].url}  alt="" className="w-10 h-10 rounded-full border-3 border-green-900 " />
-            <span className="whitespace-nowrap ml-1">{row.name}</span>
-
-          </div>
-        ),
-      },
-    {
-        name: "Phone",
-        selector: (row) => row.phone,
-    },
-    {
-        name: "Batch",
-        selector: (row) => row.batch
-    },
-    {
-        name: "Parent",
-        selector: (row) => row.parentName,
-    },
-    {
-        name: "Education",
-        selector: (row) => row.education,
-    },
+    const headers = {
+      headers: {
+        Authorization: Cookies.get('teacherToken')
+      }
+    }
     
-    {
-        name: "Manage",
-        cell: (row) => (
-            <h1 className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</h1>
-        ),
-    },
-    {
-        name: "View",
-        cell: (row) => (
-            <img src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg" alt="Manage" width="24" height="24" />
-          ),
-    },
-];
+    console.log(headers)
 
+    getBatchAPI(headers).then((response) => {
+      if(response.data.status){
+        setBatch(response.data.batch)
+        console.log(response.data.batch)
+        setAvailableSeat(response.data.availableSeat)
+      }else if (response.data.noBatch) {
+        setShowPage(false)
+      }
+    })   
+  },[])
 
-useEffect(() => {
-  const result = students.filter((item) => {
-      return item.name.toLowerCase().match(search.toLowerCase());
-  });
-  setFilterData(result);
-}, [search]);
+  useEffect(() => {
+    const headers = {
+      headers: {
+        Authorization: Cookies.get('teacherToken')
+      }
+    }
 
+    getBatchPerformanceAPI(headers).then((response) => {
+      setPerormance(response.data)
+    })
 
+  },[])
   return (
-    <div className="p-8 w-screen">
-      <div className="flex justify-between mb-4">
-        <h1 className="font-semibold text-2xl">Each Batch</h1>
-        <button className=" bg-blue-500 h-10 shadow text-white text-base font-semibold  px-4 py-2 rounded-md" onClick={handleClick}>
-          Edit Batch
-        </button>
-      </div>
-      <section>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
+    <div className=' p-8'>
+      {showPage?
+      <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4  mx-4">
           <div className="col-span-1 ">
             <div className="bg-white shadow-2xl rounded-lg p-8 ">
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Batches
+                    Batch  Performance 
                   </p>
                 </div>
-                <p className="text-green-400 text-2xl leading-none">1</p>
+                <p className="text-green-400 text-xl leading-none">1</p>
               </div>
             </div>
           </div>
@@ -129,10 +71,10 @@ useEffect(() => {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Teachers
+                    Avg batch attendance
                   </p>
                 </div>
-                <p className="text-green-400 text-2xl leading-none mb-0">1</p>
+                <p className="text-green-400 text-xl leading-none mb-0">1</p>
               </div>
             </div>
           </div>
@@ -141,19 +83,19 @@ useEffect(() => {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Students
+                    Fee completion rate
                   </p>
                 </div>
-                <p className="text-green-400 text-2xl leading-none mb-0">1</p>
+                <p className="text-green-400 text-xl leading-none mb-0">1</p>
               </div>
             </div>
           </div>
           <div className="col-span-1">
-            <div className="bg-white shadow-2xl rounded-lg p-8">
+            <div className="bg-white shadow-xl rounded-lg p-8">
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Active Batches
+                    Available Seats
                   </p>
                 </div>
                 <p className="text-green-400 text-2xl leading-none mb-0">2</p>
@@ -161,10 +103,12 @@ useEffect(() => {
             </div>
           </div>
         </div>
-      </section>
+     
 
-      <h1 className="font-semibold text-2xl mt-8">Details of the Batch</h1>
-      <div className="container-fluid  max-w-7xl mx-4 mt-4 shadow-xl">
+      
+<h1 className="font-semibold text-2xl mt-8 ">Details of the Batch</h1>
+
+      <div className="container-fluid  max-w-7xl  mt-4 shadow-xl">
         <div className="flex flex-col md:flex-row justify-evenly mb-4  py-2 text-lg">
           <div className="px-4 h-full">
             <div className="flex flex-wrap gap-x-32 gap-y-16 mt-3 mt-md-5 mb-4">
@@ -172,7 +116,7 @@ useEffect(() => {
                 <span className="font-bold text-base mb-0">Batch</span>
                 <br />
                 <span className="text-muted text-base text-gray-600">
-                  {batch[0].registerId}
+                  {batch[0]?.registerId}
                 </span>
                 <br />
               </div>
@@ -182,7 +126,7 @@ useEffect(() => {
                 </span>
                 <br />
                 <span className="text-muted text-base text-gray-600 ">
-                  {batch[0]?.teacher_data[0]?.name} ({batch[0].headOfTheBatch})
+                  {batch[0]?.teacher_data[0]?.name} ({batch[0]?.headOfTheBatch})
                 </span>
                 <br />
               </div>
@@ -192,7 +136,7 @@ useEffect(() => {
                 </span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {batch[0].batchFill}
+                  {batch[0]?.batchFill}
                 </span>
                 <br />
               </div>
@@ -200,7 +144,7 @@ useEffect(() => {
                 <span className="font-bold text-base mb-0">Total Seats</span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {batch[0].numberOfSeat}
+                  {batch[0]?.numberOfSeat}
                 </span>
                 <br />
               </div>
@@ -216,7 +160,7 @@ useEffect(() => {
                 <span className="font-bold text-base mb-0">Duration</span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {batch[0].duration}
+                  {batch[0]?.duration}
                 </span>
                 <br />
               </div>
@@ -224,7 +168,7 @@ useEffect(() => {
                 <span className="font-bold text-base mb-0">Course fee</span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {batch[0].fee}
+                  {batch[0]?.fee}
                 </span>
                 <br />
               </div>
@@ -232,7 +176,7 @@ useEffect(() => {
                 <span className="font-bold text-base mb-0">Remarks</span>
                 <br />
                 <span className="text-muted text-base text-gray-600 mt-0">
-                  {batch[0].remarks}
+                  {batch[0]?.remarks}
                 </span>
                 <br />
               </div>
@@ -255,7 +199,7 @@ useEffect(() => {
                     </tr>
                   </thead>
                   <tbody className="divide-y text-muted text-base text-gray-600">
-                    {batch[0].subjects.map((obj, i) => {
+                    {batch[0]?.subjects.map((obj, i) => {
                       return (
                         <tr key={i}>
                           <td className="p-1 border border-gray-300">
@@ -276,28 +220,14 @@ useEffect(() => {
             </div>
           </div>
         </div>
+      </div> 
       </div>
+      :
+      <p>No batch Assigned</p>
 
-      <BaseTable
-      columns={columns}
-      data={students}
-      title={<h1 className="font-semibold text-2xl">Students    </h1>}
-      subHeader
-      subHeaderComponent={
-          <input
-              type="text"
-              placeholder="Search"
-              className="w-1/4 h-10 p-4 border-2 border-gray-400 rounded-md my-3 "
-              value= {search}
-              onChange={(e) => setsearch(e.target.value)}
-          />
-      }
-     
-      
-  />
-
+}
     </div>
-  );
+  )
 }
 
-export default EachBatch;
+export default MyBatch

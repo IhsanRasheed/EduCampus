@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import BaseTable from "../../Common/BaseTable";
 import AddSubject from '../AddSubject';
-import { listSubjectsAPI } from '../../../Services/OfficeService'
+import EditSubject from '../EditSubject';
+import { listSubjectsAPI, blockSubjectAPI,unBlockSubjectAPI } from '../../../Services/OfficeService'
+import Swal from 'sweetalert2'
 // import { Link } from 'react-router-dom'
 
 function ListSubject() {
@@ -10,11 +12,77 @@ function ListSubject() {
   const [search, setsearch] = useState("");
   const [filterData, setFilterData] = useState([]);
   const [addModal, setAddModal] = useState(false)
+
+
   const [editModal, setEditModal] = useState(false)
+    const [name, setName] = useState('')
+    const [id, setId] = useState('')
+
   const handleEditOnClose = ()=> setEditModal(false)
 
-
   const handleAddOnClose = () => setAddModal(false)
+  
+  const handleBlock = async(id) => {
+    Swal.fire({
+      text: "Are you sure you want to block this subject?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Yes'
+
+    }).then((result) =>{
+      if(result.isConfirmed){
+        const headers = {
+          headers: {
+          Authorization: localStorage.getItem('officeToken')
+          }
+        }
+       blockSubjectAPI(id, headers).then(() =>{
+        const setSubject =  data.filter((obj) => {
+          if(obj._id === id) {
+            obj.isBlocked = true;
+          }
+          return obj
+        })
+        setData(setSubject)
+       })
+      }
+    })
+  }
+
+  const handleUnBlock = async(id) => {
+    console.log(id)
+    Swal.fire({
+      text: "Are you sure you want to unblock this subject?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Yes'
+
+    }).then((result) => {
+      if(result.isConfirmed){
+        const headers = {
+          headers: {
+            Authorization: localStorage.getItem('officeToken')
+          }
+        }
+
+        unBlockSubjectAPI(id, headers).then(() =>{
+          const setSubject =  data.filter((obj) => {
+            if(obj._id === id) {
+              obj.isBlocked = false;
+            }
+            return obj
+          })
+          setData(setSubject)
+         })
+        }
+    
+    })
+    
+  }
 
   const fetchData = async () => {
     const headers = {
@@ -47,15 +115,31 @@ function ListSubject() {
     {
       name: "Manage",
       cell: (row) => (
-          <h1 className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</h1>
-      ),
-  },
-  {
-    name: "Edit",
-    cell: (row) => (
-        <img src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg" alt="Manage" width="24" height="24" />
-      ),
-},
+
+        row.isBlocked === false?
+          <button  onClick={() => handleBlock(row._id)} className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</button>
+         :
+         <button  onClick={() => handleUnBlock(row._id)} className="bg-green-600 p-1 text-white text-base font-semibold rounded-lg">UNBLOCK</button>
+
+      )
+
+    },
+//   {
+//     name: "Edit",
+//     cell: (row) => (
+//       <img
+//       className="hover:cursor-pointer"
+//         src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg"
+//         alt="Manage"
+//         width="24"
+//         height="24"
+//         onClick={()=>
+//           setEditModal(true)
+//         }
+       
+//       />
+//       ),
+// },
   ]
 
   useEffect(() => {
@@ -85,7 +169,9 @@ function ListSubject() {
     actions={
       <button
         className="bg-blue-500 h-10 shadow text-white text-base font-semibold px-4 py-2 rounded-md"
-        onClick={()=>setAddModal(true)} 
+        onClick={()=>{
+          setAddModal(true)
+        }} 
       >
         Add Subject
       </button>
@@ -94,7 +180,9 @@ function ListSubject() {
   />
 
 <AddSubject onClose={handleAddOnClose} visible={addModal} reload={fetchData} />
-  
+{/* <EditSubject onClose={handleEditOnClose} visible={editModal} reload={fetchData}  data={name} id={id}/> */}
+   
+
   </>
   
   )

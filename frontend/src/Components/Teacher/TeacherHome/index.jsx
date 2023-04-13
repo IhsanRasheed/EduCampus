@@ -33,7 +33,7 @@ function TeacherHome() {
 
   return (
     <div
-      className="container-fluid  max-w-7xl mx-4 mt-8 shadow-xl"
+      className="container-fluid  max-w-7xl mx-4  shadow-xl mt-24"
       style={{ maxWidth: "1500px" }}
     >
       <div className="mt-1">
