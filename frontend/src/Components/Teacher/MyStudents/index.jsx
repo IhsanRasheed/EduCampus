@@ -78,12 +78,12 @@ const handleClick = (id) => {
         selector: (row) => row.education,
     },
     
-    {
-        name: "Manage",
-        cell: (row) => (
-            <h1 className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</h1>
-        ),
-    },
+    // {
+    //     name: "Manage",
+    //     cell: (row) => (
+    //         <h1 className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</h1>
+    //     ),
+    // },
     {
       name: "View",
       cell: (row) => (

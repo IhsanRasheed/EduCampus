@@ -31,5 +31,19 @@ teacherRouter.post('/add-attendance', verify.tokenTeacher, teacherController.add
 
 teacherRouter.post('/add-marks', verify.tokenTeacher, teacherController.addStudentMark)
 
+teacherRouter.get('/mark-data/:id', verify.tokenTeacher, teacherController.getMarkDetails)
+
+teacherRouter.get('/attendance-data/:id', verify.tokenTeacher, teacherController.getAttendanceDetails)
+
+teacherRouter.post('/letter', verify.tokenTeacher, teacherController.teacherLetter)
+
+teacherRouter.get('/leave-history', verify.tokenTeacher, teacherController.getLeaveHistory)
+
+teacherRouter.get('/student-leaves', verify.tokenTeacher, teacherController.studentLeaves)
+
+teacherRouter.patch('/leave-approve', verify.tokenTeacher, teacherController.studentLeaveApprove)
+
+teacherRouter.patch('/leave-reject', verify.tokenTeacher, teacherController.studentLeaveReject)
+
 
 module.exports = teacherRouter

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../../../Redux/Action/index";
 import Cookies from "js-cookie";
+import { Link } from 'react-router-dom';
 
 function StudentHome() {
   const dispatch = useDispatch();
@@ -32,9 +33,17 @@ function StudentHome() {
 
   return (
     <div
-      className="container-fluid  max-w-7xl mx-4 mt-8 shadow-xl"
+      className="container-fluid  max-w-7xl mx-4 shadow-xl mt-24"
       style={{ maxWidth: "1500px" }}
     >
+    <div className="flex justify-end mb-6">
+  <Link to="/student/leave-applications">
+    <button className="bg-green-500 hover:bg-green-600 text-white font-bold p-1 rounded">
+      Apply for leave
+    </button>
+  </Link>
+</div>
+
       <div className="mt-1">
       <div className="flex flex-col md:flex-row justify-evenly mb-4  py-2 text-lg">
           <div className="flex flex-col justify-center items-center border-end border-r border-gray-300 my-5 px-4 min-w-[25%]">

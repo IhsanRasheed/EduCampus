@@ -53,7 +53,126 @@ const getHome = async (req, res, next) => {
   }
 }
 
+const getMarkDetails = async(req, res, next) => {
+  const studentId = req.registerId
+  try{
+    const markDetails = await student.aggregate([
+      {
+        $match: {
+          registerId: studentId
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          markDetails: 1
+        }
+      }
+    ])
+    const sortedMarkDetails  = markDetails[0].markDetails.sort((a,b) => b.month - a.month)
+    res.status(200).json({
+      markDetails: sortedMarkDetails
+    })
+
+  }catch(err){
+    next(err)
+  }
+}
+
+const getAttendanceDetails = async(req, res, next) => {
+  const studentId = req.registerId
+  try{
+    const attendanceDetails = await student.aggregate([
+      {
+        $match: {
+          registerId: studentId
+        }
+      },
+      {
+        $project: {
+          attendance: 1
+        }
+      }
+    ])
+    const attendanceArray = await attendanceDetails[0]?.attendance?.sort ((a,b) => b.month - a.month )
+    res.json({
+      status: true,
+      attendanceData: attendanceArray
+    })
+
+  }catch(err){
+    next(err)
+  }
+}
+
+const studentLetter = async(req, res, next) => {
+  const id = req.registerId
+  const today = new Date()
+  const data = {
+    appliedDate: today,
+    from: req.body.from,
+    to: req.body.to,
+    letter: req.body.leaveLetter,
+    status: "Pending",
+    reason: ""
+  }
+  try{
+    await student.updateOne(
+      {
+        registerId: id
+      },
+      {
+        $push: {
+          myLeaves: data
+        }
+      }
+    )
+    res.json({
+      status: true
+    })
+  }catch(err){
+    next(err)
+  }
+}
+
+const getLeaveHistory = async(req, res, next) => {
+  const id = req.registerId
+  try{
+    const leaveHistory = await student.aggregate([
+      {
+        $match: {
+          registerId: id
+        }
+      },{
+        $unwind: "$myLeaves"
+      },
+      {
+        $project: {
+          myLeaves: 1
+        }
+      },
+      {
+        $sort: {
+          "myLeaves.appliedDate": -1
+        }
+      }
+    ])
+    res.json({
+      status: true,
+      leaveHistory
+    })
+
+  }catch(err){
+    next(err)
+  }
+
+}
+
 module.exports = {
   login,
-  getHome
+  getHome,
+  getMarkDetails,
+  getAttendanceDetails,
+  studentLetter,
+  getLeaveHistory
 };

@@ -156,6 +156,33 @@ const studentSchema = mongoose.Schema({
     ],
     default: []
   },
+  myLeaves: {
+    type: [
+      {
+        appliedDate:{
+          type: Date
+        },
+        from: {
+          type: Date
+        },
+        to:{
+          type:Date
+        },
+        letter: {
+          type: String
+        },
+        status: {
+          type: String,
+          default: "Pending"
+        },
+        reason:{
+         type:String,
+         default:""
+        }
+      }
+    ],
+    default: [],
+}
   
 });
 

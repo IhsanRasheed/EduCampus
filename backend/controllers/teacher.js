@@ -581,8 +581,202 @@ const addStudentMark = async(req, res, next) => {
     }
 }
 
+const getMarkDetails = async(req, res, next) => {
+    const studentId = req.params.id
+    try{
+        const markDetails = await student.aggregate([
+            {
+                $match: {
+                    registerId: studentId
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    markDetails:1
+                }
+            }
+        ])
+        const sortedMarkDetails = markDetails[0].markDetails.sort((a,b) => b.month - a.month)
+        res.status(200).json({
+            markDetails: sortedMarkDetails
+        })
+
+    }catch(err) {
+        next(err)
+    }
+}
+
+const getAttendanceDetails = async (req, res, next) => {
+    const studentId = req.params.id
+    try{
+       const attendanceDetails = await student.aggregate([
+            {
+                $match: {
+                    registerId: studentId
+                }
+            },
+            {
+                $project: {
+                    attendance: 1
+                }
+            }            
+        ])
+        const attendanceArray = await attendanceDetails[0]?.attendance?.sort((a, b) => b.month - a.month)
+        res.json({
+            status: true,
+            attendanceData: attendanceArray
+        })
+    }catch(err){
+        next(err)
+    }
+}
+
+const teacherLetter = async(req, res, next) => {
+const id = req.registerId
+    const today = new Date()
+    const data = {
+        appliedDate: today,
+        from: req.body.from,
+        to: req.body.to,
+        letter: req.body.leaveLetter,
+        status: "Pending",
+        reason: ""
+    }
+    try{
+        await teacher.updateOne(
+            {
+                registerId: id
+            },
+            {
+                $push: {
+                    myLeaves: data
+                }
+            }
+        )
+        res.json({
+            status: true
+        })
+    }catch(err){
+        next(err)
+    }
+}
+
+const getLeaveHistory = async(req, res, next) => {
+    const id = req.registerId
+    try{
+        const leaveHistory = await  teacher.aggregate([
+            {
+                $match: {
+                    registerId: id
+                }
+            },
+            {
+                $unwind: "$myLeaves"
+            },
+            {
+                $project: {
+                    myLeaves: 1
+                }
+            },
+            {
+                $sort: {
+                    'myLeaves.appliedDate': -1
+                }
+            }
+        ])
+        res.json({
+            status: true,
+            leaveHistory
+        })
+
+    }catch(err){
+        next(err)
+    }
+}
+
+const studentLeaves = async(req, res, next) => {
+    try{
+        const leaveData = await student.aggregate([
+            {
+                $match: {
+                    myLeaves: { $exists: true}
+                }
+            },
+            {
+                $unwind: "$myLeaves"
+            },
+            {
+                $project: {
+                    _id: 0,
+                    myLeaves: 1,
+                    registerId: 1,
+                    name: 1
+                }
+            },
+            {
+                $sort: {
+                    "myLeaves.appliedDate": -1
+                }
+            }
+        ])
+        res.json({
+            status: true,
+            leaveData: leaveData
+        })
+    }catch(err){
+        next(err)
+    }
+}
+
+const studentLeaveApprove = async(req, res, next) => {
+    try{
+        const data = req.body
+        await student.updateOne(
+            {
+                registerId: data.id,
+                "myLeaves._id": data.arrayElementId    
+            },
+            {
+                $set: {
+                    "myLeaves.$.status": 'Approved'
+                }
+            }
+        )
+        res.json({ status: true})
+
+    }catch(err){
+        next(err)
+    }
+}
+
+
+const studentLeaveReject = async (req, res, next) => {
+    try{
+        const data = req.body
+        await student.updateOne(
+            {
+                registerId: data.id,
+                "myLeaves._id": data.arrayElementId    
+            },
+            {
+                $set: {
+                    "myLeaves.$.status": 'Rejected',
+                    "myLeaves.$.reason": data.reason
+
+                }
+            },
+        )
+        res.json({ status: true})
+    }catch(err) {
+        next(err)
+    }
+}
+
 const getBatchPerformance = async(req, res, next) => {
     console.log('hi')
+   
+
     // last eydaam
 } 
 
@@ -599,5 +793,12 @@ module.exports = {
     addWorkingDays,
     getBatchSubjects,
     addAttendance,
-    addStudentMark
+    addStudentMark,
+    getMarkDetails,
+    getAttendanceDetails,
+    teacherLetter,
+    getLeaveHistory,
+    studentLeaves,
+    studentLeaveApprove,
+    studentLeaveReject
 }

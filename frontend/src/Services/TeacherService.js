@@ -51,3 +51,31 @@ export const postStudentAttendanceAPI = (data,headers) => {
 export const addMarkAPI = (data,headers) => {
     return axios.post('/teacher/add-marks', data, headers)
 }
+
+export const getMarkDetailsAPI = (id,headers) => {
+    return axios.get(`/teacher/mark-data/${id}`,headers)
+}
+
+export const attendanceDetailsAPI = (id,headers) => {
+    return axios.get(`/teacher/attendance-data/${id}`,headers)
+}
+
+export const postLetterAPI = (data, headers) => {
+    return axios.post('/teacher/letter',data, headers)
+}
+
+export const leaveHistoryAPI = (headers) => {
+    return axios.get('/teacher/leave-history', headers)
+}
+
+export const studentLeaveApplicationAPI = (headers) => {
+    return axios.get('/teacher/student-leaves', headers)
+}
+
+export const leaveApproveAPI = (data, headers) => {
+    return axios.patch('/teacher/leave-approve', data, headers)
+}
+
+export const leaveRejectAPI = (data, headers) => {
+    return axios.patch('/teacher/leave-reject', data, headers)
+}

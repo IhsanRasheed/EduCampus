@@ -9,16 +9,6 @@ import { useState } from "react";
 function TeacherNav() {
   const navigate = useNavigate();
   let [open,setOpen]=useState(false);
-  let Links =[
-    {name:"Home",link:"/teacher/home"},
-    {name:"My Batch",link:"/teacher/my-batch"},
-    {name:"My Students",link:"/teacher/my-students"},
-    {name:"BLOG'S",link:"/"},
-    {name:"Logout",link:"/"},
-  ];
-
-
-
 
   const handleLogout = () => {
     Cookies.remove("teacherToken");
@@ -34,6 +24,16 @@ function TeacherNav() {
       theme: "light",
       });
   };
+
+  let Links =[
+    {name:"Home",link:"/teacher/home"},
+    {name:"My Batch",link:"/teacher/my-batch"},
+    {name:"My Students",link:"/teacher/my-students"},
+    {name:"Leave history",link:"/teacher/leave-applications"},
+    {name:"student leaves",link:"/teacher/student-leaves"},
+    {name:"Logout",onClick: handleLogout},
+  ];
+  
   return (
 
      
@@ -58,9 +58,23 @@ function TeacherNav() {
     <ul className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${open ? 'top-20 ':'top-[-490px]'}`}>
       {
         Links.map((link)=>(
-          <li key={link.name} className='md:ml-8 text-xl md:my-0 my-7'>
-            <a href={link.link} className='text-gray-800 hover:text-gray-400 duration-500'>{link.name}</a>
-          </li>
+          <li key={link.name} className="md:ml-8 text-xl md:my-0 my-7">
+          {link.onClick ? (
+            <p
+              className="text-gray-800 hover:text-gray-400 duration-500 hover:cursor-pointer  "
+              onClick={link.onClick}
+            >
+              {link.name}
+            </p>
+          ) : (
+            <a
+              href={link.link}
+              className="text-gray-800 hover:text-gray-400 duration-500"
+            >
+              {link.name}
+            </a>
+          )}
+        </li>
         ))
       }
      

@@ -18,6 +18,7 @@ function AddStudentData() {
   const [formNoOfDays, setFormNoOfDays] = useState({ noOfDaysPresent: "" });
   const [formMonth, setFormMonth] = useState({ month: "", workingDays: "" });
   const formRef = useRef(null);
+  const navigate= useNavigate()
 
   const [subjects, setSubjects] = useState([]);
   const [startEndDate, setStartEndDate] = useState({
@@ -27,8 +28,6 @@ function AddStudentData() {
   const [subjectMarks, setSubjectMarks] = useState([{ subject: "", mark: "" }]);
   const [month, setMonth] = useState({ month: "" });
 
-  // const formRef = useRef(null)
-  // const navigate = useNavigate()
 
   useEffect(() => {
     const headers = {
@@ -212,11 +211,28 @@ function AddStudentData() {
     }
   }
 
+  const handleClick = () => {
+    navigate('/teacher/student-data', {
+      state: {
+        studentId:location.state.studentData.registerId
+      }
+    })
+  }
 
 
   return (
     <>
+
+<div className="flex flex-wrap justify-center items-center ms-4 me-4 mb-5">
+  <button onClick={handleClick} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+    Click here to view student history
+  </button>
+  </div>
       <div className="flex justify-center mt-8">
+
+    
+
+
         <div className="bg-white rounded-md shadow p-4 border border-gray-600">
           <div className="container d-flex flex-column justify-content-center align-items-center mt-3">
             <h6 className="text-blueGray-700 text-xl font-bold">Add Marks</h6>

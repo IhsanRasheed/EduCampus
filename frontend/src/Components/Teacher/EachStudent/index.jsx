@@ -17,7 +17,7 @@ function EachStudent() {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Batches
+                    Attendance
                   </p>
                 </div>
                 <p className="text-green-400 text-2xl leading-none">1</p>
@@ -29,7 +29,7 @@ function EachStudent() {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Teachers
+                    Performance
                   </p>
                 </div>
                 <p className="text-green-400 text-2xl leading-none mb-0">1</p>
@@ -41,7 +41,7 @@ function EachStudent() {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Students
+                    Fee completion
                   </p>
                 </div>
                 <p className="text-green-400 text-2xl leading-none mb-0">1</p>
@@ -53,10 +53,10 @@ function EachStudent() {
               <div className="flex justify-between items-end">
                 <div className="me-2">
                   <p className="text-xl text-gray-600 uppercase leading-4">
-                    Active Batches
+                    Student history
                   </p>
                 </div>
-                <p className="text-green-400 text-2xl leading-none mb-0">2</p>
+                <p className="text-green-400 text-2xl leading-none mb-0">.</p>
               </div>
             </div>
           </div>
