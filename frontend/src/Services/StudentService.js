@@ -23,3 +23,19 @@ export const leaveHistoryAPI = (headers) => {
 export const postLetterAPI = (data, headers) => {
     return axios.post('/student/letter', data, headers)
 }
+
+export const getFeeDetailsAPI = (batchId, headers) => {
+    return axios.get(`/student/get-fee/${batchId}`, headers)
+}
+
+export const feePaymentAPI = (batchId, data, headers) => {
+    return axios.post(`/student/fee-payment/${batchId}`, data, headers)
+}
+
+export const verifyPaymentAPI = (data, headers) => {
+    return axios.post('/student/verify-payment', data, headers)
+}
+
+export const getPaymentDetailsAPI = (headers) => {
+    return axios.get('/student/payment-details', headers)
+}

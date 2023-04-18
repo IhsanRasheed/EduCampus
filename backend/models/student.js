@@ -109,6 +109,9 @@ const studentSchema = mongoose.Schema({
     type:Number,
    default:0
   },
+  pendingFee: {
+    type:Number
+   },
   attendance: {
     type: [
       {

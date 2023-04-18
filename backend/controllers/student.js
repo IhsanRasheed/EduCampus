@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const student = require("../models/student");
+const batch = require('../models/batch')
+const payment = require('../models/payment')
 const jwt = require("jsonwebtoken");
 
 const login = async (req, res, next) => {
@@ -168,11 +170,105 @@ const getLeaveHistory = async(req, res, next) => {
 
 }
 
+const getFeeDetails = async(req, res, next) => {
+  const batchId = req.params.id
+  const studentId = req.registerId
+  try{
+    const courseFee = await batch.aggregate([
+      {
+        $match: {
+          registerId: batchId
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          fee: 1
+        }
+      }
+    ])
+
+    const pendingFee = await student.aggregate([
+      {
+        $match: {
+          registerId: studentId
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          pendingFee: 1
+        }
+      }
+    ])
+    const installmentAmount = ((courseFee[0].fee) /4).toFixed(2)
+    res.status(200).json({
+      totalFee: courseFee[0].fee,
+      pendingFee: pendingFee,
+      installmentAmount
+    })
+  }catch(err){
+    next(err)
+  }
+  try{
+    const paymentData = await payment.create()
+  }catch(err){
+    next(err)
+  }
+}
+
+const feePayment = async(req, res, next) => {
+  const studentId = req.registerId
+  const batchId = req.params.id
+  try{
+    if(req.body.option === 'one time') {
+      const pendingFee = await student.aggregate([
+        {
+            $match: {
+                registerId: studentId
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                pendingFee: 1
+            }
+        }
+    ])
+    amountToPay = pendingFee[0].pendingFee
+
+    } else {
+      const courseFee = await batch.aggregate([
+        {
+            $match: {
+                registerId: batchId
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                fee: 1
+            }
+        }
+    ])
+    const installmentAmount = ((courseFee[0].fee) / 4).toFixed(2)
+    amountToPay = installmentAmount
+    }
+  }catch(err){
+    next(err)
+  }
+
+}
+
+
+
 module.exports = {
   login,
   getHome,
   getMarkDetails,
   getAttendanceDetails,
   studentLetter,
-  getLeaveHistory
+  getLeaveHistory,
+  getFeeDetails,
+  feePayment
 };

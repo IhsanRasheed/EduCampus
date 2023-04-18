@@ -16,5 +16,9 @@ studentRouter.post('/letter', verify.tokenStudent, studentController.studentLett
 
 studentRouter.get('/leave-history', verify.tokenStudent, studentController.getLeaveHistory)
 
+studentRouter.get('/get-fee/:id', verify.tokenStudent, studentController.getFeeDetails)
+
+studentRouter.post('/fee-payment/:id', verify.tokenStudent, studentController.feePayment)
+
 
 module.exports = studentRouter
