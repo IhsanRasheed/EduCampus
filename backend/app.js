@@ -20,9 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/office', officeRouter) 
-app.use('/student', studentRouter)
-app.use('/teacher', teacherRouter)
+app.use('/backend/office', officeRouter) 
+app.use('/backend/student', studentRouter)
+app.use('/backend/teacher', teacherRouter)
 
 app.use(errorHandler)
 // app.use(handleMongoError)
