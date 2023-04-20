@@ -4,6 +4,7 @@ const student = require("../models/student");
 const batch = require("../models/batch");
 const subject = require('../models/subject')
 const teacher = require("../models/teacher");
+const payment = require("../models/payment")
 const helpers = require("../helpers/helpers");
 const jwt = require("jsonwebtoken");
 const mongoose = require('mongoose')
@@ -66,6 +67,21 @@ const addStudent = async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
+
+    const batchFee = await batch.aggregate([
+      {
+          $match: {
+              registerId: data.batch
+          }
+      },
+      {
+          $project: {
+              _id: 0,
+              fee: 1
+          }
+      }
+  ])
+
     await student.create({
       registerId: registerId,
       name: data.name,
@@ -80,6 +96,7 @@ const addStudent = async (req, res, next) => {
       university: data.university,
       batch: data.batch,
       password: hashedPassword,
+      pendingFee: batchFee[0].fee,
       image: image,
       address: {
         house_name: data.house_name,
@@ -520,8 +537,52 @@ const unblocksubject = async(req, res, next) => {
       status: true,
       subject
     })
-  })
-  
+  }) 
+}
+
+const getPaymentData = async(req, res, next) => {
+  try{
+    const paymentData = await payment.aggregate([
+      {
+        $match: {}
+      }, 
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'registerId',
+          foreignField: 'registerId',
+          pipeline: [
+            {
+              $project: {
+                _id: 0,
+                name: 1
+              }
+            }
+          ],
+          as: 'studentData'
+
+        }
+      },
+      {
+        $unwind: "$studentData"
+      },
+      {
+        $project: {
+          registerId: 1,
+          batch: 1,
+          amount: 1,
+          type: 1,
+          status: 1,
+          createdAt:1,
+          name: "$studentData.name"
+        }
+      }
+    ])
+    res.status(200).json({ paymentData })
+
+  }catch(err){
+    next(err)
+  }
 }
 
 module.exports = {
@@ -541,5 +602,6 @@ module.exports = {
   getEditBatch,
   patchEditBatch,
   blockSubject,
-  unblocksubject
+  unblocksubject,
+  getPaymentData
 };

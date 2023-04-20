@@ -40,5 +40,7 @@ officeRouter.patch('/block-subject/:id',  officeController.blockSubject)
 
 officeRouter.patch('/unblock-subject/:id',  officeController.unblocksubject)
 
+officeRouter.get('/payments', verify.tokenOffice, officeController.getPaymentData)
+
 
 module.exports = officeRouter

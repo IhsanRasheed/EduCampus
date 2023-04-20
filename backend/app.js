@@ -25,7 +25,7 @@ app.use('/student', studentRouter)
 app.use('/teacher', teacherRouter)
 
 app.use(errorHandler)
-app.use(handleMongoError)
+// app.use(handleMongoError)
 
 app.listen(process.env.PORT, () => {
     console.log(`PORT is running at ${process.env.PORT}`);

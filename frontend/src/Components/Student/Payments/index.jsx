@@ -14,7 +14,6 @@ function Payment() {
 
   const batchId = useSelector(state => state.studentData.studentData[0]?.batch)
   const [feeDetails, setFeeDetails] = useState({ totalFee: "", pendingFee: "", installmentAmount: "" })
-  console.log(feeDetails)
   const [selectedOption, setSelectedOption] = useState('One time settlement');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState([])
@@ -45,17 +44,17 @@ function Payment() {
     }
   },[batchId,isModalOpen])
 
-  // useEffect(() => {
-  //   const headers = {
-  //     headers: {
-  //       Authorization: Cookies.get('studentToken')
-  //     }
-  //   }
+  useEffect(() => {
+    const headers = {
+      headers: {
+        Authorization: Cookies.get('studentToken')
+      }
+    }
 
-  //   getPaymentDetailsAPI(headers).then((response) => {
-  //     setPaymentDetails(response.data.paymentDetails)
-  //   })
-  // },[isModalOpen])
+    getPaymentDetailsAPI(headers).then((response) => {
+      setPaymentDetails(response.data.paymentDetails)
+    })
+  },[isModalOpen])
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -70,29 +69,30 @@ const handleOptionChange = (event) => {
 };
 
 const handlePayment = () =>{
+  console.log('hi')
   let option
   if(selectedOption === 'One time settlement')
   option = "One time"
   else
   option = 'Installment'
-
     const headers = {
       headers: {
         Authorization: Cookies.get('studentToken')
       }
     }
-  feePaymentAPI(batchId, {option}, headers).then((response) => {
+  feePaymentAPI(batchId, {option}, headers).then((res) => {
+    console.log(res.data.order.amount)
     const options = {
       key: razorpaykeyId,
-      amount: response.data.order.amount,
+      amount: res.data.order.amount,
       currency: "INR",
       name: "Educampus",
       description: "Test Transaction",
       image: "/images/logo.png",
-      order_id: response.data.order.id,
+      order_id: res.data.order.id,
       handler: function (response) {
 
-          verifyPayment(response, response.data);
+          verifyPayment(response, res.data);
       },
       prefill: {
           name: "Educampus",
@@ -117,6 +117,7 @@ const handlePayment = () =>{
 }
 
 const verifyPayment = (payment, details) => {
+
   const headers = {
     headers: {
       Authorization: Cookies.get('studentToken')
@@ -143,7 +144,7 @@ const verifyPayment = (payment, details) => {
       <div className="flex justify-end">
       {feeClosed ? (
   <div className="container flex justify-center">
-    <h3>You successfully closed your entire course fee</h3>
+    <h3 className='text font-semibold text-2xl'>You successfully closed your entire course fee</h3>
   </div>
 ) : (
   <button
@@ -204,15 +205,15 @@ const verifyPayment = (payment, details) => {
     </tr>
     <tr>
       <th >Pending amount</th>
-      {/* <td className="px-4 py-2">₹ {feeDetails?.pendingFee}</td> */}
+      <td className="px-4 py-2">₹ {feeDetails?.pendingFee}</td>
     </tr>
     <tr>
       <th>Amount to pay now</th>
-      {/* <td className="px-4 py-2 ">₹ {
+      <td className="px-4 py-2 ">₹ {
         selectedOption === "One time settlement" ?
           feeDetails?.pendingFee :
           feeDetails?.installmentAmount
-      }</td> */}
+      }</td>
     </tr>
   </tbody>
 </table>
@@ -233,9 +234,9 @@ const verifyPayment = (payment, details) => {
 
         <div className='flex flex-wrap justify-between items-center'>
 
-<div className='w-full md:w-1/2 lg:w-5/12 px-4 py-6 border-2 border-gray-900 rounded-lg'>
+<div className='w-full md:w-1/2 lg:w-5/12 px-4 py-6 border-2 border-gray-900 rounded-lg mt-12'>
   <div className='flex justify-center items-center mt-3'>
-    <h5 className='underline'>Payment history</h5>
+    <h5 className='underline font-semibold text-xl'>Payment history</h5>
   </div>
   <div className='mt-4'>
     {feeDetails.pendingFee > 1 && (
@@ -249,11 +250,11 @@ const verifyPayment = (payment, details) => {
       <table className='w-full table-auto'>
         <thead>
           <tr>
-            <th className='px-4 py-2'>NO</th>
-            <th className='px-4 py-2'>Reference ID</th>
-            <th className='px-4 py-2'>Date</th>
-            <th className='px-4 py-2'>Amount</th>
-            <th className='px-4 py-2'>Status</th>
+            <th className='border' >NO</th>
+            <th className='border px-2 py-2'>Reference ID</th>
+            <th className='border px-2 py-2'>Date</th>
+            <th className='border px-2 py-2'>Amount</th>
+            <th className='border px-2 py-2'>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -264,11 +265,11 @@ const verifyPayment = (payment, details) => {
             const readableDate = paidDate.toLocaleDateString('en-US', options);
             return (
               <tr key={obj._id}>
-                <td className='border px-4 py-2'>{index + 1}</td>
-                <td className='border px-4 py-2'>{obj._id}</td>
-                <td className='border px-4 py-2'>{readableDate}</td>
-                <td className='border px-4 py-2'>{obj.amount}</td>
-                <td className='border px-4 py-2 text-green-600 font-bold'>
+                <td className='border' >{index + 1}</td>
+                <td className='border px-2 py-2'>{obj._id}</td>
+                <td className='border py-2'>{readableDate}</td>
+                <td className='border px-2 py-2'>{obj.amount}</td>
+                <td className='border px-2 py-2 text-green-600 font-bold'>
                   {obj.status}
                 </td>
               </tr>
@@ -284,9 +285,9 @@ const verifyPayment = (payment, details) => {
   </div>
 </div>
 
-<div className='w-full md:w-1/2 lg:w-7/12 px-4 py-6 '>
+<div className='w-full md:w-1/2 lg:w-7/12 px-4 py-6 mt-12'>
   <div className='flex justify-center items-center mt-3  border-gray-900 rounded-lg'>
-    <h5 className='underline'>Fee structure</h5>
+    <h5 className='underline font-semibold text-xl'>Fee structure</h5>
   </div>
   <div className='mt-4 px-16'>
     <p className=' text-lg.font-normal.leading-9'>

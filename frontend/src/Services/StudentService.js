@@ -4,6 +4,10 @@ export const studentLoginAPI = (data) => {
     return axios.post('/student/login', data) 
 }
 
+export const studentForgotAPI = (data) => {
+    return axios.post('/student/forgot-password', data)
+}
+
 export const getHomeAPI = (headers) => {
     return axios.get('/student/home', headers)
 }

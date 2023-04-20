@@ -11,6 +11,7 @@ import ListSubject from '../Pages/Office/ListSubject'
 import EachBatch from '../Pages/Office/EachBatch'
 import OfficeVerification from '../Verification/OfficeVerification'
 import EditBatch from '../Pages/Office/EditBatch'
+import Payments from '../Pages/Office/Payments'
 
 
 function OfficeRoutes() {
@@ -39,6 +40,8 @@ function OfficeRoutes() {
         <Route path='/subjects' element={<OfficeVerification><ListSubject /></OfficeVerification>}></Route>
 
         <Route path='/edit-batch' element={<OfficeVerification><EditBatch /></OfficeVerification>}></Route>
+
+        <Route path='/payments' element={<OfficeVerification><Payments /></OfficeVerification>}></Route>
 
 
     </Routes>

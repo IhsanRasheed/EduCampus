@@ -49,6 +49,10 @@ const login = async (req, res, next) => {
 
 }
 
+const forgot = async(req, res, next) => {
+    console.log('bakilethi')
+}
+
 const getHome = async (req, res, next) => {
     const id = req.registerId
     try{
@@ -782,6 +786,7 @@ const getBatchPerformance = async(req, res, next) => {
 
 module.exports = {
     login,
+    forgot,
     getHome,
     getMyStudents,
     eachStudent,

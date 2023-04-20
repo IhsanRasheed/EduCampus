@@ -71,3 +71,7 @@ export const blockSubjectAPI = (id, headers) => {
 export const unBlockSubjectAPI = (id, headers) => {
     return axios.patch(`/office/unblock-subject/${id}`, headers)
 }
+
+export const paymentDataAPI = (headers) => {
+    return axios.get('/office/payments', headers)
+}

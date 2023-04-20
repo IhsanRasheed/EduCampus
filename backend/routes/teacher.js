@@ -7,10 +7,12 @@ const teacher = require('../models/teacher')
 
 teacherRouter.post('/login',teacherController.login )
 
+teacherRouter.post('/forgot-password', teacherController.forgot)
+
 teacherRouter.get('/home', verify.tokenTeacher, teacherController.getHome)
 
 teacherRouter.get('/my-students', verify.tokenTeacher, teacherController.getMyStudents)
-
+        
 teacherRouter.get('/each-student/:id', verify.tokenTeacher, teacherController.eachStudent)
 
 teacherRouter.get('/available-month', verify.tokenTeacher, teacherController.availableMonth)
