@@ -79,3 +79,11 @@ export const paymentDataAPI = (headers) => {
 export const getDashboarAPI = (headers) => {
     return axios.get('/office/dashboard', headers)
 }
+
+export const blockTeacherAPI = (id, headers) => {
+    return axios.patch(`/office/block-teacher/${id}`, headers)
+}
+
+export const unBlockTeacherAPI = (id, headers) => {
+    return axios.patch(`/office/unblock-teacher/${id}`, headers)
+}

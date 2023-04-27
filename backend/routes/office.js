@@ -44,5 +44,9 @@ officeRouter.get('/payments', verify.tokenOffice, officeController.getPaymentDat
 
 officeRouter.get('/dashboard', verify.tokenOffice, officeController.getDashboardData)
 
+officeRouter.patch('/block-teacher/:id', officeController.blockTeacher)
+
+officeRouter.patch('/unblock-teacher/:id',  officeController.unblockTeacher)
+
 
 module.exports = officeRouter

@@ -80,8 +80,7 @@ function ListSubject() {
          })
         }
     
-    })
-    
+    }) 
   }
 
   const fetchData = async () => {

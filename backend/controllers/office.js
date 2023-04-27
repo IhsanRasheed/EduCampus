@@ -657,6 +657,42 @@ const getDashboardData = async (req, res, next) => {
   }
 }
 
+const blockTeacher = async(req, res, next) => {
+  const id   = req.params.id
+  teacher.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: true},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((subject)=> {
+    res.json({
+      status: true,
+      subject
+    })
+  })
+}
+
+const unblockTeacher = async(req, res, next) => {
+  const id = req.params.id
+  teacher.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: false},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((subject)=> {
+    res.json({
+      status: true,
+      subject
+    })
+  }) 
+}
+
+
+
 module.exports = {
   addStudent,
   login,
@@ -676,5 +712,7 @@ module.exports = {
   blockSubject,
   unblocksubject,
   getPaymentData,
-  getDashboardData
+  getDashboardData,
+  blockTeacher,
+  unblockTeacher
 };

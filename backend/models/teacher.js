@@ -118,7 +118,12 @@ const teacherSchema = mongoose.Schema({
           }
         ],
         default: [],
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
     }
+
 })
 
 module.exports = mongoose.model('teacher', teacherSchema)

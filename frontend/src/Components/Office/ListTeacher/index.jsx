@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import BaseTable from '../../Common/BaseTable'
-import { listTeachersAPI } from '../../../Services/OfficeService'
+import { listTeachersAPI,blockTeacherAPI,unBlockTeacherAPI } from '../../../Services/OfficeService'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 function ListTeacher() {
     const [data, setData] = useState([]);
@@ -27,6 +28,67 @@ useEffect( () => {
     })
 
 },[])
+
+const handleBlock = async(id) => {
+    Swal.fire({
+      text: "Are you sure you want to block this subject?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Yes'
+
+    }).then((result) =>{
+      if(result.isConfirmed){
+        const headers = {
+          headers: {
+          Authorization: localStorage.getItem('officeToken')
+          }
+        }
+       blockTeacherAPI(id, headers).then(() =>{
+        const setSubject =  data.filter((obj) => {
+          if(obj._id === id) {
+            obj.isBlocked = true;
+          }
+          return obj
+        })
+        setData(setSubject)
+       })
+      }
+    })
+  }
+
+  const handleUnBlock = async(id) => {
+    console.log(id)
+    Swal.fire({
+      text: "Are you sure you want to unblock this subject?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Yes'
+
+    }).then((result) => {
+      if(result.isConfirmed){
+        const headers = {
+          headers: {
+            Authorization: localStorage.getItem('officeToken')
+          }
+        }
+
+        unBlockTeacherAPI(id, headers).then(() =>{
+          const setSubject =  data.filter((obj) => {
+            if(obj._id === id) {
+              obj.isBlocked = false;
+            }
+            return obj
+          })
+          setData(setSubject)
+         })
+        }
+    
+    }) 
+  }
 
 const columns = [
     // {
@@ -72,9 +134,15 @@ const columns = [
     {
         name: "Manage",
         cell: (row) => (
-            <h1 className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</h1>
-        ),
-    },
+  
+          row.isBlocked === false?
+            <button  onClick={() => handleBlock(row._id)} className="bg-red-600 p-1 text-white text-base font-semibold rounded-lg">BLOCK</button>
+           :
+           <button  onClick={() => handleUnBlock(row._id)} className="bg-green-600 p-1 text-white text-base font-semibold rounded-lg">UNBLOCK</button>
+  
+        )
+  
+      },
     {
         name: "View",
         cell: (row) => (
