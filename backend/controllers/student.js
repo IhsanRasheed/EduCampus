@@ -70,12 +70,10 @@ const forgot = async(req, res, next) => {
     
       const password = generatePassword(8);
       const hashedPassword = await bcrypt.hash(password, 10);
-      console.log(hashedPassword)
        const check = await student.updateOne(
         {registerId: data.registerId},
         { $set: { password: hashedPassword } }
         )
-        console.log(check)
 
       let mailDetails = {
         from: process.env.nodemailerEmail,
@@ -96,6 +94,10 @@ const forgot = async(req, res, next) => {
         message: "Password sent to registered email"
       })
 
+    }else{
+      res.json({
+        error: "Invalid RegisterId"
+      })
     }
    
   }catch(err){

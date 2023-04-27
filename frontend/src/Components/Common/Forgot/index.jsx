@@ -9,6 +9,7 @@ function Forgot() {
   const initialValues = { registerId: ""};
   const [formValues, setFormvalues] = useState(initialValues);
   const [error, setError] = useState("");
+  console.log(error)
   const navigate = useNavigate();
 
   const onChangeHandle = (e) => {
@@ -20,11 +21,9 @@ const handleSubmit = (event) => {
   event.preventDefault();
 
   const role = document.querySelector('input[name="role"]:checked').value;
-  console.log(role)
 
   if( role === 'student') {
     studentForgotAPI(formValues).then((response) => {
-      console.log(response.data)
       if(response.data.status){
         navigate('/login')
         toast.success("Password changed successfully", {
@@ -37,15 +36,27 @@ const handleSubmit = (event) => {
           progress: undefined,
           theme: "light",
         });
+      } else if(response.data.error) {
+        setError(response.data.error)
       }
 
     })
   } else if ( role === 'teacher') {
     teacherForgotAPI(formValues).then((response) => {
       if(response.data.status) {
-        console.log('heloo')
         navigate('/login')
-
+        toast.success("Password changed successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else if(response.data.error) {
+        setError(response.data.error)
       }
     })
   }
@@ -94,23 +105,7 @@ const handleSubmit = (event) => {
                         required
                       />
                     </div>
-                    {/* <div className="mb-4">
-                      <label
-                        className="block font-medium text-sm mb-2"
-                        htmlFor="password"
-                      >
-                        Password
-                      </label>
-                      <input
-                        // value={formValues.password}
-                        // onChange={onChangeHandle}
-                        type="password"
-                        id="password"
-                        name="password"
-                        className="border border-gray-300 py-2 px-3 w-full rounded-md"
-                        required
-                      />
-                    </div> */}
+                 
 
                     <div className="flex justify-around mb-12">
                       <div className="flex items-center">
@@ -148,7 +143,7 @@ const handleSubmit = (event) => {
                       </div>
                     </div>
 
-                    {/* {error && <p className="ms-2 text-red-600">{error}</p>} */}
+                    {error && <p className="ms-2 text-red-600">{error}</p>}
 
                     <div className="mt-4">
                       <button

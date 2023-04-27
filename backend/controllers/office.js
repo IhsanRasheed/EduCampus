@@ -585,6 +585,78 @@ const getPaymentData = async(req, res, next) => {
   }
 }
 
+const getDashboardData = async (req, res, next) => {
+  try{
+    const studentsCount = await student.countDocuments()
+    const batchCount = await batch.countDocuments()
+    const teacherCount = await teacher.countDocuments()
+
+    const activeBatchesTotalFee = await batch.aggregate([
+                
+      {
+          $match: {
+              endDate: { $gte: new Date() }
+          }
+      },
+      {
+          $project: {
+              _id: 0,
+              total: { $multiply: ["$batchFill", "$fee"] }
+          }
+      },
+      {
+          $group: {
+              _id: null,
+              total: { $sum: "$total" }
+          }
+      }
+  ])
+
+    const totalPaidAmount = await payment.aggregate([
+      {
+        $match: {
+          status: "Paid"
+        }
+      },
+      {
+        $group: {
+          _id: null, 
+          total: { $sum: '$amount'}
+        }
+      }
+    ])
+
+    const feeCompletionRate = ((totalPaidAmount[0].total/ activeBatchesTotalFee[0].total) * 100).toFixed(2)
+
+    const batchData = await batch.aggregate([
+      {
+          $project:{
+              _id:0,
+              batch:"$registerId",
+              students:"$batchFill",
+              seats:"$numberOfSeat"
+          }
+      }
+  ])
+  const teacherData = await teacher.aggregate([
+      {
+          $project:{
+              _id:0,
+              name:1,
+              salary:1,
+              experience:1
+          }
+      }
+  ])
+  res.json({
+    studentsCount, batchCount, teacherCount, feeCompletionRate,batchData,teacherData
+})
+
+  }catch(err){
+    next(err)
+  }
+}
+
 module.exports = {
   addStudent,
   login,
@@ -603,5 +675,6 @@ module.exports = {
   patchEditBatch,
   blockSubject,
   unblocksubject,
-  getPaymentData
+  getPaymentData,
+  getDashboardData
 };

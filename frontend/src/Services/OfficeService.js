@@ -75,3 +75,7 @@ export const unBlockSubjectAPI = (id, headers) => {
 export const paymentDataAPI = (headers) => {
     return axios.get('/office/payments', headers)
 }
+
+export const getDashboarAPI = (headers) => {
+    return axios.get('/office/dashboard', headers)
+}
