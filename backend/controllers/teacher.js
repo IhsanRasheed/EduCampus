@@ -3,6 +3,7 @@ const mailer = require("../config/nodeMailer");
 const teacher = require("../models/teacher");
 const student = require("../models/student");
 const batch = require("../models/batch");
+const payment = require("../models/payment")
 const jwt = require("jsonwebtoken");
 const helpers = require("../helpers/helpers");
 
@@ -824,9 +825,78 @@ const studentLeaveReject = async (req, res, next) => {
 };
 
 const getBatchPerformance = async (req, res, next) => {
-  console.log("hi");
+  const teacherId = req.registerId
+  try{
+    const batchId = await teacher.aggregate([
+      {
+        $match: {
+          registerId: teacherId
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          myBatch: 1
+        }
+      }
+    ])
 
-  // last eydaam
+    const totalFee = await batch.aggregate([
+        {
+          $match: {
+            registerId: batchId[0].myBatch,
+            endDate: { $gte: new Date() }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            total: { $multiply: ["$batchFill", "$fee" ]}
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$total"}
+          }
+        }
+    ])
+
+    const totalPaidAmount= await payment.aggregate([
+      {
+        $match: {
+          batch: batchId[0].myBatch,
+          status: "Paid"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount"}
+        }
+      }
+    ])
+    const feeCompletionRate = ((totalPaidAmount[0].total/ totalFee[0].total) * 100).toFixed(2)
+
+    // const performance = await student.aggregate([
+    //   {
+    //     $match: {
+    //       batch: batchId[0].myBatch
+    //     }
+    //   }, {
+    //     $group: {
+    //       _id: null,
+    //       av
+    //     }
+    //   }
+    // ])
+
+
+  }catch(err){
+    next(err)
+  }
+
+
 };
 
 module.exports = {

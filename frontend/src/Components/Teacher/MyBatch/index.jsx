@@ -8,8 +8,8 @@ import Cookies from "js-cookie";
 function MyBatch() {
 
   const [performance,setPerormance]=useState({feeCompletionRate: "", avgPerformance: "", avgattendance: ""})
+  console.log(performance)
   const [batch, setBatch] = useState([])
-  console.log(batch)
   const [availableSeat, setAvailableSeat] = useState('')
   const [showPage, setShowPage] = useState(true)
   const startDate = batch[0]?.startDate
@@ -24,13 +24,10 @@ function MyBatch() {
       }
     }
     
-    console.log(headers)
 
     getBatchAPI(headers).then((response) => {
       if(response.data.status){
         setBatch(response.data.batch)
-        console.log(response.data.batch)
-        setAvailableSeat(response.data.availableSeat)
       }else if (response.data.noBatch) {
         setShowPage(false)
       }
