@@ -586,7 +586,6 @@ const getPaymentData = async(req, res, next) => {
 }
 
 const getDashboardData = async (req, res, next) => {
-  console.log("reached");
   try{
     const studentsCount = await student.countDocuments()
     const batchCount = await batch.countDocuments()
@@ -649,13 +648,11 @@ const getDashboardData = async (req, res, next) => {
           }
       }
   ])
-  console.log("reached 2");
   res.json({
     studentsCount, batchCount, teacherCount, feeCompletionRate,batchData,teacherData
 })
 
   }catch(err){
-    console.log(err)
     next(err)
   }
 }
