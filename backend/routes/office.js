@@ -46,7 +46,13 @@ officeRouter.get('/dashboard', verify.tokenOffice, officeController.getDashboard
 
 officeRouter.patch('/block-teacher/:id', officeController.blockTeacher)
 
-officeRouter.patch('/unblock-teacher/:id',  officeController.unblockTeacher)
+officeRouter.patch('/unblock-teacher/:id', officeController.unblockTeacher)
+
+officeRouter.get('/get-teacher/:id', verify.tokenOffice, officeController.getTeacher)
+
+officeRouter.patch('/block-student/:id', officeController.blockStudent)
+
+officeRouter.patch('/unblock-student/:id', officeController.unblockStudent)
 
 
 module.exports = officeRouter

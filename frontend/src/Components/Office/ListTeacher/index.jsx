@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import BaseTable from '../../Common/BaseTable'
-import { listTeachersAPI,blockTeacherAPI,unBlockTeacherAPI } from '../../../Services/OfficeService'
-import { Link } from 'react-router-dom'
+import { listTeachersAPI,blockTeacherAPI,unBlockTeacherAPI,getTeacherAPI } from '../../../Services/OfficeService'
+import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 function ListTeacher() {
     const [data, setData] = useState([]);
     const [search, setsearch] = useState("");
     const [filterData, setFilterData] = useState([]);
+    const navigate = useNavigate();
 
 
   
@@ -90,6 +91,24 @@ const handleBlock = async(id) => {
     }) 
   }
 
+  const handleClick = async (id) => {
+    const headers = {
+      headers: {
+        Authorization: localStorage.getItem('officeToken')
+      }
+    }
+
+    getTeacherAPI(id,headers).then((response) => {
+      if (response.data.status) {
+        navigate("/office/each-teacher", {
+          state: {
+           teacher: response.data.teacher
+          },
+        })
+      }
+    })
+  };
+
 const columns = [
     // {
     //     name: "Sl No.",
@@ -143,12 +162,21 @@ const columns = [
         )
   
       },
-    {
-        name: "View",
-        cell: (row) => (
-            <img src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg" alt="Manage" width="24" height="24" />
-          ),
-    },
+      // {
+      //   name: "View",
+      //   cell: (row) => (
+      //     <img
+      //     className="hover:cursor-pointer"
+      //       src="https://res.cloudinary.com/dgmz2jv6j/image/upload/v1680585943/EduCampus/Office/export_vijvto.svg"
+      //       alt="Manage"
+      //       width="24"
+      //       height="24"
+      //       onClick={() => {
+      //         handleClick(row.registerId);
+      //       }}
+      //     />
+      //   ),
+      // },
 ];
 
 useEffect(() => {

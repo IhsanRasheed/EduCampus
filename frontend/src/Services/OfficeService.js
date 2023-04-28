@@ -87,3 +87,15 @@ export const blockTeacherAPI = (id, headers) => {
 export const unBlockTeacherAPI = (id, headers) => {
     return axios.patch(`/office/unblock-teacher/${id}`, headers)
 }
+
+export const getTeacherAPI = (id,headers) => {
+    return axios.get(`/office/get-teacher/${id}`, headers)
+}
+
+export const blockStudentAPI = (id, headers) => {
+    return axios.patch(`/office/block-student/${id}`, headers)
+}
+
+export const unBlockStudentAPI = (id, headers) => {
+    return axios.patch(`/office/unblock-student/${id}`, headers)
+}

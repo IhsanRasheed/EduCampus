@@ -691,6 +691,49 @@ const unblockTeacher = async(req, res, next) => {
   }) 
 }
 
+const getTeacher = async (req, res) => {
+  const id = req.params.id
+  teacher.findOne({ registerId: id }).then((teacher) => {
+    res.json({
+        status: true,
+        teacher: teacher
+    })
+})
+}
+
+const blockStudent = async(req, res, next) => {
+  const id   = req.params.id
+  student.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: true},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((student)=> {
+    res.json({
+      status: true,
+      student
+    })
+  })
+}
+
+const unblockStudent = async(req, res, next) => {
+  const id = req.params.id
+  student.findByIdAndUpdate(
+    {_id: id},
+    {isBlocked: false},
+    {
+      new: true,
+      runValidators: true
+    },
+  ).then((student)=> {
+    res.json({
+      status: true,
+      student
+    })
+  }) 
+}
 
 
 module.exports = {
@@ -714,5 +757,8 @@ module.exports = {
   getPaymentData,
   getDashboardData,
   blockTeacher,
-  unblockTeacher
+  unblockTeacher,
+  getTeacher,
+  blockStudent,
+  unblockStudent
 };
