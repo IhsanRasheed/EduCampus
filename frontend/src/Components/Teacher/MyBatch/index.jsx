@@ -50,7 +50,7 @@ function MyBatch() {
     <div className=' p-8'>
       {showPage?
       <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4  mx-4">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4  mx-4">
           <div className="col-span-1 ">
             <div className="bg-white shadow-2xl rounded-lg p-8 ">
               <div className="flex justify-between items-end">
@@ -99,7 +99,7 @@ function MyBatch() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
      
 
       
