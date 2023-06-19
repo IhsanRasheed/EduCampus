@@ -716,7 +716,8 @@ const blockStudent = async(req, res, next) => {
       student
     })
   })
-}
+} 
+//
 
 const unblockStudent = async(req, res, next) => {
   const id = req.params.id
